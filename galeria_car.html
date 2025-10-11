@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Autos</title>
+    <link rel="stylesheet" href="car_gallery.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+</head>
+
+<body>
+    <style>
+        /* VARIABLES DE COLOR */
+        :root {
+            --color-barra: #337ab7;
+            --color-barra-borde: #0056b3;
+            --color-claro: #ffffff;
+            --color-fondo-panel: rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: var(--color-claro);
+            overflow: hidden;
+            /* Fondo que simula la carretera de la playa */
+            background-image: url('./img/fondo\ 5.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            scroll-behavior: smooth;
+        }
+
+        .screen-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-bar {
+            width: 100%;
+            display: flex;
+            /* Esto es clave para alinear los ítems en una fila */
+            justify-content: space-around;
+            /* Distribuye el espacio entre los elementos */
+            align-items: center;
+            /* Alinea verticalmente los elementos en el centro */
+            padding: 10px 0;
+            background: rgba(0, 0, 0, 0.4);
+            /* Fondo semi-transparente */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            /* Sombra para darle profundidad */
+
+        }
+
+        /* Estilos para el ítem base */
+        .top-item {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+
+            /* Ajustes basados en tu referencia */
+            border-radius: 8px;
+            border: 3px solid #fff;
+            /* Usamos 3px como en tu código de referencia */
+            font-weight: bold;
+            font-size: 1em;
+            text-shadow: 1px 1px 2px #000;
+            margin-right: 12px;
+            /* Espacio entre la mayoría de los ítems */
+            height: 40px;
+            box-sizing: border-box;
+        }
+
+        /* Espacio para el ícono */
+        .top-item i {
+            margin-right: 5px;
+            font-size: 1.5em;
+        }
+
+        /* --- A. Botón de Regreso --- */
+        .back-button {
+            background-color: #337ab7;
+            border-color: #0056b3;
+            font-size: 1.2em;
+        }
+
+        /* --- B. Barras de Progreso (Trofeos y Hojas) --- */
+        .progress-bar {
+            background-color: transparent;
+            border-color: gold;
+            /* Mantenemos el borde amarillo del trofeo */
+            border-width: 3px;
+            padding: 5px 10px;
+        }
+
+
+        /* --- C. Caja de Regalo (ALINEACIÓN CLAVE) --- */
+        .gift-box {
+            background-color: #f0ad4e;
+            /* Lo hacemos semi-transparente */
+            border-color: #d68c00;
+            /* Borde blanco sutil */
+            border-radius: 5px;
+            /* Más cuadrado que el resto */
+            padding: 5px 10px;
+
+            /* AUMENTAMOS el margen DERECHO para separar la caja de las monedas (como en la imagen final) */
+            margin-right: 30px;
+        }
+
+        .gift-box i {
+            margin: 0;
+            font-size: 1.5em;
+            color: #fff;
+            /* El ícono debe ser blanco */
+        }
+
+
+        /* --- D. Recursos (Monedas, Diamantes, Llaves) --- */
+
+        /* Fondo/Borde para Monedas y Diamantes */
+        .coins,
+        .diamonds {
+            background-color: #f0ad4e;
+            /* Fondo Naranja/Amarillo */
+            border-color: #d68c00;
+            /* Borde más oscuro */
+            border-width: 3px;
+        }
+
+        .coins i,
+        .diamonds i {
+            color: #fff;
+            /* Íconos blancos */
+        }
+
+        /* Estilo para las llaves */
+        .keys {
+            /* Fondo/Borde */
+            background-color: #f0ad4e;
+            border-color: #d68c00;
+            border-width: 3px;
+
+            /* Circular y centrado */
+            border-radius: 50%;
+            width: 40px;
+            /* Ajustamos para que sea un círculo completo */
+            height: 40px;
+            justify-content: center;
+            padding: 0;
+            margin-right: 0;
+            /* Lo llevamos hasta el final de la barra */
+        }
+
+        .keys i {
+            margin: 0;
+            color: #fff;
+            font-size: 1.5em;
+        }
+
+        #titulo {
+            color: white;
+            text-decoration: none;
+        }
+
+        .fa-arrow-left::before {
+            color: #fff;
+        }
+
+        /* ======================================= */
+        /* 2. CONTENIDO PRINCIPAL Y CARRUSEL */
+        /* ======================================= */
+
+        .gallery-content {
+            display: flex;
+            flex-grow: 1;
+            width: 100%;
+            /* Ocupa todo el ancho */
+            margin-top: 80px;
+            justify-content: center;
+            /* Centra el carrusel */
+
+            /* 🛑 MODIFICACIÓN CLAVE: CONTEXTO DE POSICIONAMIENTO PARA EL PANEL 🛑 */
+            position: relative;
+        }
+
+        /* 2.1. Menú de Stats Lateral (Deshabilitado en esta versión simple) */
+        .stats-menu {
+            /* Si lo deseas poner a la izquierda, debes usar flexbox más complejo, 
+            pero por ahora, lo ocultamos para que el carrusel funcione bien */
+            display: none;
+        }
+
+
+        /* 2.2. Contenedor del Carrusel de Autos - AJUSTE CLAVE */
+        .car-display-area {
+            width: 100%;
+            max-width: 1000px;
+            /* Limita el ancho del carrusel para que no sea excesivo */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 300px;
+        }
+
+        /* Contenedor visible de un solo auto (Wrapper) */
+        .carousel-wrapper {
+            width: 80%;
+            /* Ocupa el 100% de .car-display-area (max-width: 1000px) */
+            height: 500px;
+            /* **ALTURA DEFINIDA Y GRANDE** (CRUCIAL para model-viewer) */
+            margin: 20px 0;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+
+            /* Fondo que simula la plataforma de exhibición */
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .carousel-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Contenedor interno que permite el scroll de todos los items */
+        .car-scroll-container {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* Cada auto es una unidad completa (La clave de la reestructuración de tu amigo) */
+        .car-item {
+            min-width: 100%;
+            /* ¡Cada ítem ocupa el 100% del ancho del scroll! */
+            height: 100%;
+            flex-shrink: 0;
+            scroll-snap-align: center;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 🛑 CLAVE: El car-item necesita ser el contexto para el panel de stats. 
+               Aunque el panel se posicionará respecto a .gallery-content, 
+               lo dejamos como 'relative' para futuras extensiones si fuera necesario, 
+               aunque 'absolute' en el panel bastará con respecto al body/gallery. */
+        }
+
+        /* Estructura interna de la tarjeta de auto */
+        .car-card {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            height: 90%;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .car-media {
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 🚨 Estilo ESENCIAL para el componente 3D (model-viewer) */
+        .car-item model-viewer {
+            width: 90%;
+            height: 500px;
+            /* Le damos una altura fija grande para que se vea */
+            display: block;
+            --poster-color: transparent;
+        }
+
+        .car-info {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .car-info h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+            color: gold;
+            text-shadow: 2px 2px 3px #000;
+        }
+
+        .car-desc {
+            font-size: 1em;
+            color: var(--color-claro);
+            opacity: 0.8;
+        }
+
+
+        /* 2.3. Menú de Selección Inferior y Puntos */
+        .selection-menu-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+
+        /* 2.4. Puntos de Anclaje (Navegación) */
+        .dot-navigation {
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            display: block;
+            width: 12px;
+            height: 12px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .dot:focus,
+        .dot.active-dot {
+            transform: scale(1.1);
+        }
+
+        /* ======================================= */
+        /* 3. PANELES LATERALES (IZQUIERDA Y DERECHA) */
+        /* ======================================= */
+
+        .unlocked-cars-menu,
+        .upgrades-menu {
+            width: 200px;
+            /* Ancho fijo para ambos paneles */
+            height: 500px;
+            /* Altura fija igual a la del carrusel */
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Color "negrito" y transparente */
+            border: 3px solid var(--color-barra);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+        }
+
+        .panel-title {
+            text-align: center;
+            font-size: 1.2em;
+            color: gold;
+            text-shadow: 1px 1px 2px #000;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--color-barra);
+        }
+
+        /* --- Panel Izquierdo: Lista de Autos Desbloqueados --- */
+        .unlocked-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-start;
+            overflow-y: auto;
+            /* Permite hacer scroll si hay muchos iconos */
+        }
+
+        .car-icon {
+            width: 45px;
+            height: 45px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--color-claro);
+            border-radius: 5px;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-barra);
+            font-size: 1.5em;
+        }
+
+        .car-icon.active {
+            border-color: gold;
+            box-shadow: 0 0 8px gold;
+        }
+
+        .car-icon.locked {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-color: #555;
+            color: #777;
+            cursor: not-allowed;
+        }
+
+        /* 🛑 NUEVAS REGLAS DE POSICIONAMIENTO PARA EL PANEL DE STATS EMBEBIDO 🛑 */
+        /* Reutilizamos la clase .stats-progress-menu para mantener los estilos de barra */
+        .stats-progress-menu {
+            width: 250px;
+            /* Un poco más ancho para las barras */
+            height: 500px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--color-barra);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            /* Espacio entre las filas de stats */
+
+            /* 🛑 CLAVE CSS PARA SACARLO DEL FLUJO 🛑 */
+            position: absolute;
+            top: 0;
+            left: -270px;
+            /* Mueve el panel fuera del carrusel, a la izquierda de .gallery-content */
+            z-index: 10;
+
+            /* Ocultar por defecto */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            margin-left: 100px;
+        }
+
+        /* Estilos para cada fila de estadística (Icono + Barra) */
+        .stat-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-icon-large {
+            width: 35px;
+            /* Tamaño del ícono */
+            height: 35px;
+            filter: drop-shadow(0 0 3px #000);
+        }
+
+        .bar-container {
+            flex-grow: 1;
+            /* Ocupa el espacio restante */
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .bar-label {
+            font-size: 0.8em;
+            font-weight: bold;
+            color: var(--color-claro);
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        /* El contenedor visual de la barra de progreso */
+        .stat-bar-prog {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.15);
+            /* Fondo gris claro */
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+        /* El color que rellena la barra (progreso) */
+        .stat-fill-prog {
+            height: 100%;
+            /* Utiliza un degradado para un look más moderno como el de la imagen */
+            background: linear-gradient(to right, #007bff, var(--color-barra));
+            transition: width 0.5s ease-out;
+        }
+
+        /* Estilo para la habilidad especial (barra inferior) */
+        .special-skill {
+            margin-top: auto;
+            /* Empuja este elemento hacia el fondo */
+            padding: 10px;
+            text-align: center;
+            font-size: 1em;
+            font-weight: bold;
+            color: gold;
+            background-color: rgba(51, 122, 183, 0.6);
+            /* Azul oscuro semi-transparente */
+            border-radius: 5px;
+            border: 1px solid gold;
+            box-shadow: 0 0 5px gold;
+        }
+
+        /* 🛑 CLAVE CSS: REVELAR EL PANEL ACTIVO 🛑 */
+        /* Muestra el panel de stats cuando su carrito padre es el target de la URL (#car-X) */
+        .car-item:target .stats-progress-menu {
+            opacity: 1;
+            pointer-events: auto;
+            left: 0;
+            /* Colócalo a 0px de la izquierda de .gallery-content */
+        }
+
+        /* ================================================= */
+/* === 1. CONFIGURACIÓN BASE (Llama Uniforme) === */
+/* ================================================= */
+.dot {
+    width: 30px; 
+    height: 30px; 
+    position: relative;
+    cursor: pointer;
+    /* Transición suave para la reacción al hacer clic */
+    transition: all 0.2s ease-in-out; 
+    background: none;
+    border-radius: 0;
+}
+
+/* --- ESTADO BASE (APLICADO A TODOS LOS PUNTOS) --- */
+.dot:before {
+    /* Ícono: fa-fire */
+    content: "\f06d"; 
+    font-family: "Font Awesome 6 Free"; 
+    font-weight: 900;
+    
+    /* Estilos de Llama Brillante (Tomado del estado activo anterior) */
+    font-size: 26px; 
+    color: #FF9800; /* Naranja/Ámbar constante */
+    opacity: 1; 
+    
+    /* Resaltado visual uniforme */
+    border: 2px solid #FFC107; /* Borde sutil dorado */
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(255, 152, 0, 0.7); /* Glow uniforme */
+    
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    transition: all 0.2s ease-in-out; 
+}
+
+    </style>
+    <div class="screen-container">
+
+        <div class="top-bar">
+            <a href="pagina_2.html" class="top-item back-button">
+                <i class="fas fa-arrow-left"></i>
+                <span id="titulo">Atrás</span>
+            </a>
+            <div class="top-item progress-bar"><i class="fas fa-trophy"></i><span>0/48</span></div>
+            <div class="top-item progress-bar"><i class="fas fa-leaf"></i><span>0%</span></div>
+            <div class="top-item gift-box"><i class="fas fa-gift"></i></div>
+            <div class="top-item coins"><i class="fas fa-coins"></i><span>0</span></div>
+            <div class="top-item diamonds"><i class="fas fa-gem"></i><span>10</span></div>
+            <div class="top-item keys"><i class="fas fa-key"></i><span>6</span></div>
+        </div>
+
+        <div class="gallery-content">
+            <div class="car-display-area">
+                <div class="carousel-wrapper">
+                    <div class="car-scroll-container">
+
+                        <div class="car-item" id="car-1">
+
+                            <div class="stats-progress-menu">
+                                <h3 class="panel-title">Estadísticas del Vehículo</h3>
+
+                                <div class="stat-bar-row">
+                                    <img src="./img/icons8-medidor-de-velocidad-50.png" alt="Velocidad"
+                                        class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">VELOCIDAD</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 40%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/aceleracion.png" alt="Aceleración" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">ACELERACIÓN</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 60%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/icono de fuerza.png" alt="Fuerza" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">FUERZA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 80%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/manejo.png" alt="Manejo" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">MANEJO</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 70%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/defensa.png" alt="Defensa" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">DEFENSA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 55%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="special-skill">
+                                    <i class="fas fa-bolt"></i> Habilidad Especial: Turbo Boost
+                                </div>
+                            </div>
+                            <div class="car-card">
+                                <div class="car-media">
+                                    <model-viewer src="carrito1.glb" alt="Beach Buggy 3D" auto-rotate
+                                        camera-controls shadow style="width: 100%; height: 100%;">
+                                    </model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="car-item" id="car-2">
+
+                            <div class="stats-progress-menu">
+                                <h3 class="panel-title">Estadísticas del Vehículo</h3>
+
+                                <div class="stat-bar-row">
+                                    <img src="./img/icons8-medidor-de-velocidad-50.png" alt="Velocidad"
+                                        class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">VELOCIDAD</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 65%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/aceleracion.png" alt="Aceleración" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">ACELERACIÓN</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 45%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/icono de fuerza.png" alt="Fuerza" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">FUERZA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 95%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/manejo.png" alt="Manejo" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">MANEJO</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 40%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/defensa.png" alt="Defensa" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">DEFENSA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 90%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="special-skill">
+                                    <i class="fas fa-shield-alt"></i> Habilidad Especial: Blindaje Reforzado
+                                </div>
+                            </div>
+                            <div class="car-card">
+                                <div class="car-media">
+                                    <model-viewer src="CARRITO2.glb" alt="Monster Truck 3D" auto-rotate
+                                        camera-controls shadow style="width: 100%; height: 100%;">
+                                    </model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="car-item" id="car-3">
+
+                            <div class="stats-progress-menu">
+                                <h3 class="panel-title">Estadísticas del Vehículo</h3>
+
+                                <div class="stat-bar-row">
+                                    <img src="./img/icons8-medidor-de-velocidad-50.png" alt="Velocidad"
+                                        class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">VELOCIDAD</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 90%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/aceleracion.png" alt="Aceleración" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">ACELERACIÓN</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 85%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/icono de fuerza.png" alt="Fuerza" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">FUERZA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 60%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/manejo.png" alt="Manejo" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">MANEJO</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 95%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/defensa.png" alt="Defensa" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">DEFENSA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 30%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="special-skill">
+                                    <i class="fas fa-meteor"></i> Habilidad Especial: Hyper-Drift
+                                </div>
+                            </div>
+                            <div class="car-card">
+                                <div class="car-media">
+                                    <model-viewer src="CARRITO3.glb" alt="Kart Veloz 3D" auto-rotate
+                                        camera-controls shadow style="width: 100%; height: 100%;"></model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="car-item" id="car-4">
+
+                            <div class="stats-progress-menu">
+                                <h3 class="panel-title">Estadísticas del Vehículo</h3>
+
+                                <div class="stat-bar-row">
+                                    <img src="./img/icons8-medidor-de-velocidad-50.png" alt="Velocidad"
+                                        class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">VELOCIDAD</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 50%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/aceleracion.png" alt="Aceleración" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">ACELERACIÓN</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 50%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/icono de fuerza.png" alt="Fuerza" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">FUERZA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 50%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/manejo.png" alt="Manejo" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">MANEJO</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 50%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/defensa.png" alt="Defensa" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">DEFENSA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 50%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="special-skill">
+                                    <i class="fas fa-hand-rock"></i> Habilidad Especial: Equilibrio
+                                </div>
+                            </div>
+                            <div class="car-card">
+                                <div class="car-media">
+                                    <model-viewer src="CARRITO4 (2).glb" alt="Auto 4" auto-rotate camera-controls
+                                        shadow style="width: 100%; height: 100%;"></model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="car-item" id="car-5">
+
+                            <div class="stats-progress-menu">
+                                <h3 class="panel-title">Estadísticas del Vehículo</h3>
+
+                                <div class="stat-bar-row">
+                                    <img src="./img/icons8-medidor-de-velocidad-50.png" alt="Velocidad"
+                                        class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">VELOCIDAD</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 75%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/aceleracion.png" alt="Aceleración" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">ACELERACIÓN</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 80%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/icono de fuerza.png" alt="Fuerza" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">FUERZA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 40%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/manejo.png" alt="Manejo" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">MANEJO</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 85%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/defensa.png" alt="Defensa" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">DEFENSA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 35%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="special-skill">
+                                    <i class="fas fa-wind"></i> Habilidad Especial: Viento en Popa
+                                </div>
+                            </div>
+                            <div class="car-card">
+                                <div class="car-media">
+                                    <model-viewer src="CARRITO5.glb" alt="Auto 5" auto-rotate camera-controls
+                                        shadow style="width: 100%; height: 100%;"></model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="car-item" id="car-6">
+
+                            <div class="stats-progress-menu">
+                                <h3 class="panel-title">Estadísticas del Vehículo</h3>
+
+                                <div class="stat-bar-row">
+                                    <img src="./img/icons8-medidor-de-velocidad-50.png" alt="Velocidad"
+                                        class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">VELOCIDAD</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 99%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/aceleracion.png" alt="Aceleración" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">ACELERACIÓN</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 99%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/icono de fuerza.png" alt="Fuerza" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">FUERZA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 10%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/manejo.png" alt="Manejo" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">MANEJO</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 90%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/defensa.png" alt="Defensa" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">DEFENSA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 10%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="special-skill">
+                                    <i class="fas fa-fire-alt"></i> Habilidad Especial: Furia Extrema
+                                </div>
+                            </div>
+                            <div class="car-card">
+                                <div class="car-media">
+                                    <model-viewer src="CARRITO6.glb" alt="Auto 6" auto-rotate camera-controls
+                                        shadow style="width: 100%; height: 100%;"></model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="car-item" id="car-7">
+
+                            <div class="stats-progress-menu">
+                                <h3 class="panel-title">Estadísticas del Vehículo</h3>
+
+                                <div class="stat-bar-row">
+                                    <img src="./img/icons8-medidor-de-velocidad-50.png" alt="Velocidad"
+                                        class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">VELOCIDAD</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 60%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/aceleracion.png" alt="Aceleración" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">ACELERACIÓN</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 60%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/icono de fuerza.png" alt="Fuerza" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">FUERZA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 70%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/manejo.png" alt="Manejo" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">MANEJO</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 70%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/defensa.png" alt="Defensa" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">DEFENSA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 70%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="special-skill">
+                                    <i class="fas fa-star"></i> Habilidad Especial: Comodín
+                                </div>
+                            </div>
+                            <div class="car-card">
+                                <div class="car-media">
+                                    <model-viewer src="CARRITO7.glb" alt="Auto 7" auto-rotate camera-controls
+                                        shadow style="width: 100%; height: 100%;"></model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="car-item" id="car-8">
+
+                            <div class="stats-progress-menu">
+                                <h3 class="panel-title">Estadísticas del Vehículo</h3>
+
+                                <div class="stat-bar-row">
+                                    <img src="./img/icons8-medidor-de-velocidad-50.png" alt="Velocidad"
+                                        class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">VELOCIDAD</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 30%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/aceleracion.png" alt="Aceleración" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">ACELERACIÓN</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 25%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/icono de fuerza.png" alt="Fuerza" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">FUERZA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 90%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/manejo.png" alt="Manejo" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">MANEJO</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 20%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/defensa.png" alt="Defensa" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">DEFENSA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 95%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="special-skill">
+                                    <i class="fas fa-weight-hanging"></i> Habilidad Especial: Peso Pesado
+                                </div>
+                            </div>
+                            <div class="car-card">
+                                <div class="car-media">
+                                    <model-viewer src="CARRITO8.glb" alt="Auto 8" auto-rotate camera-controls
+                                        shadow style="width: 100%; height: 100%;"></model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="car-item" id="car-9">
+
+                            <div class="stats-progress-menu">
+                                <h3 class="panel-title">Estadísticas del Vehículo</h3>
+
+                                <div class="stat-bar-row">
+                                    <img src="./img/icons8-medidor-de-velocidad-50.png" alt="Velocidad"
+                                        class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">VELOCIDAD</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 70%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/aceleracion.png" alt="Aceleración" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">ACELERACIÓN</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 75%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/icono de fuerza.png" alt="Fuerza" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">FUERZA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 50%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/manejo.png" alt="Manejo" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">MANEJO</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 80%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/defensa.png" alt="Defensa" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">DEFENSA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 45%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="special-skill">
+                                    <i class="fas fa-road"></i> Habilidad Especial: Asfalto
+                                </div>
+                            </div>
+                            <div class="car-card">
+                                <div class="car-media">
+                                    <model-viewer src="CARRITO9.glb" alt="Auto 9" auto-rotate camera-controls
+                                        shadow style="width: 100%; height: 100%;"></model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="car-item" id="car-10">
+
+                            <div class="stats-progress-menu">
+                                <h3 class="panel-title">Estadísticas del Vehículo</h3>
+
+                                <div class="stat-bar-row">
+                                    <img src="./img/icons8-medidor-de-velocidad-50.png" alt="Velocidad"
+                                        class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">VELOCIDAD</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 85%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/aceleracion.png" alt="Aceleración" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">ACELERACIÓN</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 85%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/icono de fuerza.png" alt="Fuerza" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">FUERZA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 20%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/manejo.png" alt="Manejo" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">MANEJO</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 85%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar-row">
+                                    <img src="./img/defensa.png" alt="Defensa" class="stat-icon-large">
+                                    <div class="bar-container">
+                                        <span class="bar-label">DEFENSA</span>
+                                        <div class="stat-bar-prog">
+                                            <div class="stat-fill-prog" style="width: 25%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="special-skill">
+                                    <i class="fas fa-ghost"></i> Habilidad Especial: Fantasma
+                                </div>
+                            </div>
+                            <div class="car-card">
+                                <div class="car-media">
+                                    <model-viewer src="CARRITO10 (1).glb" alt="Auto 10" auto-rotate
+                                        camera-controls shadow style="width: 100%; height: 100%;"></model-viewer>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="dot-navigation">
+                    <a href="#car-1" class="dot active-dot"></a>
+                    <a href="#car-2" class="dot"></a>
+                    <a href="#car-3" class="dot"></a>
+                    <a href="#car-4" class="dot"></a>
+                    <a href="#car-5" class="dot"></a>
+                    <a href="#car-6" class="dot"></a>
+                    <a href="#car-7" class="dot"></a>
+                    <a href="#car-8" class="dot"></a>
+                    <a href="#car-9" class="dot"></a>
+                    <a href="#car-10" class="dot"></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+</body>
+
+</html>

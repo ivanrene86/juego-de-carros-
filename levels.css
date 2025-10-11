@@ -1,0 +1,287 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #008cba; /* Un color de fondo simple por ahora */
+    overflow: hidden; /* Evita barras de desplazamiento en el body */
+    color: white;
+    background-image: url("./img/fondo3.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.screen-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ... (Estilos de top-bar y level-card sin cambios significativos) ... */
+
+/* Nuevo contenedor para el desplazamiento */
+.carousel-wrapper {
+     /* El ancho es el mismo que el de una sola tarjeta */
+    width: 910px; 
+    overflow-x: scroll; 
+    scroll-snap-type: x mandatory; 
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    height: fit-content;
+}
+.carousel-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+/* Modificaciones para levels-container para que los cards fluyan horizontalmente */
+.levels-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* Reduce el espacio entre tarjetas */
+    gap: 30px; 
+    padding: 70px 0; /* Ajusta el padding si es necesario */
+    /* Remueve el ancho fijo, deja que el flexbox lo maneje */
+    width: auto;
+}
+
+/* ... (El resto de tus estilos CSS que ya tenías) ... */
+
+/* ESTILOS DE LA TARJETA DE NIVEL */
+.level-card {
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    position: relative;
+    /* El ancho de la tarjeta debe ser fijo y más pequeño */
+    width: 900px; 
+    height: 500px;
+    border-radius: 20px;
+    border: 5px solid #fff;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+}
+
+
+/* El video de fondo */
+.level-card video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1; /* El video está en la capa inferior */
+    border-radius: 20px;
+}
+
+/* El contenedor para el nombre y la información */
+.card-content {
+    position: relative;
+    z-index: 2; /* **Esta es la clave.** Lo pone en una capa por encima del video. */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Para que el título esté arriba y la información abajo */
+    align-items: center;
+    padding: 20px;
+    /* Un degradado para mejorar la legibilidad del texto sobre el video */
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 20%, transparent 50%, rgba(0,0,0,0.2) 80%, rgba(0,0,0,0.6) 100%);
+}
+
+/* Estilos para el título "Easy Street" */
+.card-title {
+    font-size: 2.5em; /* Aumenté un poco el tamaño para que sea más visible */
+    font-weight: bold;
+    color: white; /* Asegúrate de que el color del texto sea visible */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Sombra para que se destaque */
+    margin-top: 10px;
+    z-index: 3;
+}
+
+/* Estilos para "0/15" y el trofeo */
+.card-info {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px;
+    margin-bottom: 10px;
+    z-index: 3;
+}
+
+.progress-text {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 1px #000;
+}
+
+.card-trophy {
+    font-size: 2.5em;
+    color: gold;
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* Estilos para el icono de candado en los niveles bloqueados */
+.lock-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5em;
+    color: rgba(255, 255, 255, 0.7);
+    text-shadow: 2px 2px 4px #000;
+    z-index: 3; /* Asegura que el candado esté en la capa más alta */
+}
+
+/* El filtro de blanco y negro para los niveles bloqueados */
+.level-card.locked .level-video,
+.level-card.locked .card-content {
+    filter: grayscale(100%) blur(2px);
+}
+/* Y si quieres que el contenido se vea mejor, puedes añadir un degradado semi-transparente
+   por encima del video (o dentro de .card-content) */
+.level-card.locked .card-content {
+    filter: grayscale(100%) blur(2px); /* Mantuviste este filtro para los niveles bloqueados, lo respetaré */
+}
+
+/* Estilos para el punto activo al hacer clic */
+a.dot {
+    background-color: rgb(255, 255, 255); /* Color por defecto */
+}
+
+a.dot:focus, a.dot.active-dot {
+    background-color: white; /* Color al ser enfocado o activo */
+}
+
+/* Resaltar la tarjeta de nivel activa usando :target */
+.level-card:target {
+    border-color: #e24ef0;
+
+}
+
+/* ... (Estilos de imágenes de fondo para cada card) ... */
+.easy-street-img { background-image: url('easy-street.jpg'); }
+.coconut-cup-img { background-image: url('coconut-cup.jpg'); }
+.sunshine-sprint-img { background-image: url('sunshine-sprint.jpg'); }
+.chowder-bowl-img { background-image: url('chowder-bowl.jpg'); }
+.desert-dunes-img { background-image: url('desert-dunes.jpg'); }
+.volcano-race-img { background-image: url('volcano-race.jpg'); }
+.jungle-jam-img { background-image: url('jungle-jam.jpg'); }
+.arctic-dash-img { background-image: url('arctic-dash.jpg'); }
+
+
+/* Navegación de puntos */
+.dot-navigation {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.dot {
+    width: 15px;
+    height: 15px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+}
+
+.dot.active-dot {
+    background-color: white;
+}
+
+/* Barra inferior */
+.bottom-bar {
+    width: 100%;
+    text-align: center;
+    background: #0056b3;
+    padding: 15px 0;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-top: 5px solid #004488;
+}
+/* Estilos para la barra superior completa */
+.top-bar {
+    width: 100%;
+    display: flex; /* Esto es clave para alinear los ítems en una fila */
+    justify-content: space-around; /* Distribuye el espacio entre los elementos */
+    align-items: center; /* Alinea verticalmente los elementos en el centro */
+    padding: 10px 0;
+    background: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra para darle profundidad */
+}
+
+/* Estilos para cada ítem de la barra superior */
+.top-item {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3); 
+    padding: 5px 10px;
+    
+    /* Ajustes basados en tu referencia */
+    border-radius: 8px; 
+    border: 3px solid #fff; /* Usamos 3px como en tu código de referencia */
+    font-weight: bold;
+    font-size: 1em;
+    text-shadow: 1px 1px 2px #000;
+    margin-right: 12px; /* Espacio entre la mayoría de los ítems */
+    height: 40px;
+    box-sizing: border-box;
+}
+
+/* Estilos específicos para cada tipo de ítem para que coincidan con la imagen */
+.back-button {
+    background-color: #337ab7; /* Color azul para el botón de "Atrás" */
+    border: 3px solid #0056b3; /* Borde más oscuro */
+    font-size: 1.2em; /* Texto más grande */
+}
+
+.top-item i {
+    margin-right: 5px; /* Espacio entre el ícono y el texto */
+    font-size: 1.5em; /* Tamaño del ícono */
+}
+
+/* Color y borde para el ícono de trofeo */
+.top-item.progress-bar {
+    background-color: transparent; /* Transparente para este ítem */
+    border-color: gold;
+    border-width: 3px;
+    padding: 5px;
+}
+
+/* Estilos para las monedas y gemas */
+.coins, .diamonds, .top-item:nth-child(4), .top-item:nth-child(7) {
+    background-color: #f0ad4e; /* Fondo naranja/amarillo */
+    border-color: #d68c00;
+    border-width: 3px;
+}
+
+/* Estilos específicos para el ícono de regalo (cuarto ítem) */
+.top-item:nth-child(4) {
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+/* Estilo para las llaves */
+.top-item:nth-child(7) {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.top-item:nth-child(7) i {
+    margin: 0;
+}
