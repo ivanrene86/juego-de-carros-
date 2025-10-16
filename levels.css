@@ -4,7 +4,7 @@ body {
     background: #008cba; /* Un color de fondo simple por ahora */
     overflow: hidden; /* Evita barras de desplazamiento en el body */
     color: white;
-    background-image: url("./img/fondo3.jpeg");
+    background-image: url("fondo3.jpeg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -284,4 +284,5 @@ a.dot:focus, a.dot.active-dot {
 
 .top-item:nth-child(7) i {
     margin: 0;
+
 }
